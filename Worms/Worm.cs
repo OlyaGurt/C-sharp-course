@@ -1,75 +1,114 @@
-﻿using System.Xml;
-
-namespace Worms;
-
-public class Worm
+namespace Worms
 {
-    private string _name;
-    private Coordinate _position;
-    private int _lives;
-    private StreamWriter _file;
-
-    public string Name { get; set; }
-
-    public Coordinate Position { get; set; }
-    
-    public int Lives { get; set; }
-
-    public Worm(string name, Coordinate position, int lives)
+    public class Worm
     {
-        _name = name;
-        _position = position;
-        Lives = lives;
-        _file = new StreamWriter("D:/Olga/Documents/Study/4th course/C#/Worms/coordsJohn.txt");
+        private string _name;
+        private Coordinates _position;
+        private int _lives;
+        private FileWriterService _fileWriterService;
         
 
-    }
-    
+        public FileWriterService FileWriterService
+        {
+            get => _fileWriterService;
+            set => _fileWriterService = value;
+        }
 
-    public void CloseFile()
-    {
-        _file.Close();
-    }
-    
-    public void Write()
-    {
-        _file.WriteLine("Worms:[" + _name + "(" + _position.X + "," + _position.Y + ")]");
+        public int Lives
+        {
+            get
+            {
+                return _lives;
+            }
+            set
+            {
+                _lives = value;
+            }
+        }
         
+        public string Name
+        {
+            get
+            {
+                return _name;
+            }
+            set
+            {
+                _name = value;
+            }
+            
+        }
+        public Coordinates Position
+        {
+            get
+            {
+                return _position;
+            }
+            set
+            {
+                _position = value;
+            }
+            
+        }
+        
+        public Worm(FileWriterService fileWriterService, NameGenerator nameGenerator)
+        {
+            _name = nameGenerator.GetNewName();
+            _position = new Coordinates();
+            _position.X = 0;
+            _position.Y = 0;
+            _lives = 10;
+            _fileWriterService = fileWriterService;
+
+        }
+        
+        public Worm(FileWriterService fileWriterService, NameGenerator nameGenerator, int x, int y)
+        {
+            _name = nameGenerator.GetNewName();
+            _position = new Coordinates();
+            _position.X = x;
+            _position.Y = y;
+            _lives = 10;
+            _fileWriterService = fileWriterService;
+
+        }
+
+        public Coordinates MoveRight()
+        {
+            _position.X = _position.X + 1;
+            _fileWriterService.WriteCoordinatesToFile(_name, _lives, _position.X, _position.Y);
+            return _position;
+        }
+        
+        public Coordinates MoveLeft()
+        {
+            _position.X = _position.X - 1;
+            _fileWriterService.WriteCoordinatesToFile(_name, _lives, _position.X, _position.Y);
+            return _position;
+        }
+        public Coordinates MoveUp()
+        {
+            _position.Y = _position.Y + 1;
+            _fileWriterService.WriteCoordinatesToFile(_name, _lives, _position.X, _position.Y);
+            return _position;
+        }
+        public Coordinates MoveDown()
+        {
+            _position.Y = _position.Y - 1;
+            _fileWriterService.WriteCoordinatesToFile(_name, _lives, _position.X, _position.Y);
+            return _position;
+        }
+        
+        public Coordinates DontMove()
+        {
+            _fileWriterService.WriteCoordinatesToFile(_name, _lives, _position.X, _position.Y);
+            return _position;
+        }
+        
+        public void EndOfAction()
+        {
+            _lives = _lives - 1;
+        }
+
     }
-
-    public void MoveRight()
-    {
-        _position.X++;
-        Lives--;
-        Write();
-
-    }
-
-    public void MoveLeft()
-    {
-        _position.X--;
-        Lives--;
-        Write();
-    }
-
-    public void MoveUp()
-    {
-        _position.Y++;
-        Lives--;
-        Write();
-    }
-
-    public void MoveDown()
-    {
-        _position.Y--;
-        Lives--;
-        Write();
-    }
-
-    public void DontMove()
-    {
-        Lives--;
-        Write();
-    }
-
 }
